@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 public class Students {
 
+    private static int rowsCount = 0;
+
     private static void insertRow(String name, String surname, String patronymic, String birthday, String groupName, Connection c) throws SQLException {
         PreparedStatement prep = c.prepareStatement("INSERT INTO STUDENTS (NAME,SURNAME,PATRONYMIC, BIRTHDAY,GROUP_NAME) VALUES(?, ?, ?, date(?), ?)");
         prep.setString(1, name);
@@ -16,6 +18,8 @@ public class Students {
         prep.setString(4, birthday);
         prep.setString(5, groupName);
         prep.executeUpdate();
+        prep.close();
+        rowsCount++;
     }
 
     private static void insertData(Connection c) throws SQLException {
@@ -41,14 +45,15 @@ public class Students {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:students.db");
             c.setAutoCommit(false);
-            var initCount = getRowsCount(c);
             PreparedStatement prep = c.prepareStatement("DELETE FROM STUDENTS WHERE ID = ?");
             prep.setString(1, String.valueOf(id));
             prep.executeUpdate();
             c.commit();
             var currentCount = getRowsCount(c);
-            if (currentCount != initCount) System.out.println("Студент успешно удален из таблицы");
-            else System.out.println("Студента с таким ID нет в таблице");
+            if (currentCount != rowsCount) {
+                System.out.println("Студент успешно удален из таблицы");
+                rowsCount -= 1;
+            } else System.out.println("Студента с таким ID нет в таблице");
             c.close();
         } catch (Exception e) {
             System.err.println("Произошла ошибка при попытке удаления студента из таблицы");
@@ -112,7 +117,7 @@ public class Students {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:students.db");
             c.setAutoCommit(false);
-            if (getRowsCount(c) == 0) System.out.println("Таблица пуста");
+            if (rowsCount == 0) System.out.println("Таблица пуста");
             else {
                 var stmt = c.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT ID, NAME, SURNAME, PATRONYMIC, BIRTHDAY, GROUP_NAME FROM STUDENTS;");
