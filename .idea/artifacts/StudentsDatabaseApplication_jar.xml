@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="StudentsDatabaseApplication:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/StudentsDatabaseApplication_jar</output-path>
+    <root id="archive" name="StudentsDatabaseApplication.jar">
+      <element id="module-output" name="StudentsDatabaseApplication" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../sqlite-jdbc-3.8.10.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
